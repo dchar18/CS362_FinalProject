@@ -28,12 +28,22 @@ class ViewController: UIViewController {
     var hm10Peripheral: CBPeripheral!
     
     var valueData : Data!
+    var direction : Int!
+    var steering_enabled : Bool!
+    var drive_enabled : Bool!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        centralManager = CBCentralManager(delegate: self, queue: nil)
         connectButton.setTitle("Connect", for: .normal)
         displayLabel.text = ""
+        direction = 0
+        drive_enabled = false
+        steering_enabled = false
+    }
+    
+    @IBAction func onConnectPressed(_ sender: UIButton) {
+        centralManager = CBCentralManager(delegate: self, queue: nil)
     }
     
 
@@ -45,90 +55,233 @@ class ViewController: UIViewController {
     @IBAction func onForwardButtonPressed(_ sender: UIButton) {
         print("Forward Pressed")
         forwardButton.backgroundColor = UIColor.lightGray
-        drive_value = "11"
-        writeValue(data: String(drive_value))
+//        drive_value = "11"
+//        writeValue(data: String(drive_value))
 //        writeValue(data: "1")
 //        writeValue(data: "1")
+    
+        drive_enabled = true
+        if !steering_enabled{
+            direction = 1
+            writeValue(data: String(direction))
+        }
+        else{
+            if direction > 1{ // direction = 3
+                direction = 2
+                writeValue(data: String(direction))
+            }
+            else{ //direction = 7
+                direction = 8
+                writeValue(data: String(direction))
+            }
+        }
         
         backwardButton.isEnabled = false
-        displayLabel.text = drive_value
+        displayLabel.text = String(direction)
     }
     
     @IBAction func onForwardButtonReleased(_ sender: UIButton) {
         print("Forward Released")
         forwardButton.backgroundColor = UIColor.darkGray
-        drive_value = "10"
-        writeValue(data: String(drive_value))
+//        drive_value = "10"
+//        writeValue(data: String(drive_value))
 //        writeValue(data: "1")
 //        writeValue(data: "0")
+        
+        drive_enabled = false
+        if !steering_enabled{ // previously driving straight
+            direction = 0
+            writeValue(data: String(direction))
+        }
+        else{
+            if direction == 8{
+                direction = 7
+                writeValue(data: String(direction))
+            }
+            else{ // direction = 2
+                direction = 3
+                writeValue(data: String(direction))
+            }
+        }
+        
         backwardButton.isEnabled = true
-        displayLabel.text = drive_value
+//        displayLabel.text = drive_value
+        displayLabel.text = String(direction)
     }
     
     @IBAction func onBackwardButtonPressed(_ sender: UIButton) {
         print("Back Pressed")
         backwardButton.backgroundColor = UIColor.lightGray
-        drive_value = "12"
-        writeValue(data: String(drive_value))
+//        drive_value = "12"
+//        writeValue(data: String(drive_value))
 //        writeValue(data: "1")
 //        writeValue(data: "2")
+        
+        drive_enabled = true
+        if !steering_enabled{
+            direction = 5
+            writeValue(data: String(direction))
+        }
+        else{
+            if direction > 5{ // direction = 7
+                direction = 6
+                writeValue(data: String(direction))
+            }
+            else{ //direction = 3
+                direction = 4
+                writeValue(data: String(direction))
+            }
+        }
+        
         forwardButton.isEnabled = false
-        displayLabel.text = drive_value
+//        displayLabel.text = drive_value
+        displayLabel.text = String(direction)
     }
     
     @IBAction func onBackwardButtonReleased(_ sender: UIButton) {
         print("Back Released")
         backwardButton.backgroundColor = UIColor.darkGray
-        drive_value = "10"
-        writeValue(data: String(drive_value))
+//        drive_value = "10"
+//        writeValue(data: String(drive_value))
 //        writeValue(data: "1")
 //        writeValue(data: "0")
+        
+        drive_enabled = false
+        if !steering_enabled{ // previously driving straight
+            direction = 0
+            writeValue(data: String(direction))
+        }
+        else{
+            if direction == 6{
+                direction = 7
+                writeValue(data: String(direction))
+            }
+            else{ // direction = 4
+                direction = 3
+                writeValue(data: String(direction))
+            }
+        }
+        
         forwardButton.isEnabled = true
-        displayLabel.text = drive_value
+//        displayLabel.text = drive_value
+        displayLabel.text = String(direction)
     }
     
     @IBAction func onLeftButtonPressed(_ sender: UIButton) {
         print("Left Pressed")
         leftButton.backgroundColor = UIColor.lightGray
-        steer_value = "21"
-        writeValue(data: String(steer_value))
+//        steer_value = "21"
+//        writeValue(data: String(steer_value))
 //        writeValue(data: "2")
 //        writeValue(data: "1")
+        
+        steering_enabled = true
+        if !drive_enabled{
+            direction = 7
+            writeValue(data: String(direction))
+        }
+        else{
+            if direction == 1{
+                direction = 8
+                writeValue(data: String(direction))
+            }
+            else{ // direction = 5
+                direction = 6
+                writeValue(data: String(direction))
+            }
+        }
+        
         rightButton.isEnabled = false
-        displayLabel.text = steer_value
+//        displayLabel.text = steer_value
+        displayLabel.text = String(direction)
     }
     
     @IBAction func onLeftButtonReleased(_ sender: UIButton) {
         print("Left Released")
         leftButton.backgroundColor = UIColor.darkGray
-        steer_value = "20"
-        writeValue(data: String(steer_value))
+//        steer_value = "20"
+//        writeValue(data: String(steer_value))
 //        writeValue(data: "2")
 //        writeValue(data: "0")
+        
+        steering_enabled = false
+        if !drive_enabled{
+            direction = 0
+            writeValue(data: String(direction))
+        }
+        else{
+            if direction == 8{
+                direction = 1
+                writeValue(data: String(direction))
+            }
+            else{ // direction = 6
+                direction = 5
+                writeValue(data: String(direction))
+            }
+        }
+        
+        
         rightButton.isEnabled = true
-        displayLabel.text = steer_value
+//        displayLabel.text = steer_value
+        displayLabel.text = String(direction)
     }
     
     @IBAction func onRightButtonPressed(_ sender: UIButton) {
         print("Right Pressed")
         rightButton.backgroundColor = UIColor.lightGray
-        steer_value = "22"
-        writeValue(data: String(steer_value))
+//        steer_value = "22"
+//        writeValue(data: String(steer_value))
 //        writeValue(data: "2")
 //        writeValue(data: "2")
+        
+        steering_enabled = true
+        if !drive_enabled{
+            direction = 3
+            writeValue(data: String(direction))
+        }
+        else{
+            if direction == 1{
+                direction = 2
+                writeValue(data: String(direction))
+            }
+            else{ // direction = 5
+                direction = 4
+                writeValue(data: String(direction))
+            }
+        }
+        
         leftButton.isEnabled = false
-        displayLabel.text = steer_value
+//        displayLabel.text = steer_value
+        displayLabel.text = String(direction)
     }
     
     @IBAction func onRightButtonReleased(_ sender: UIButton) {
         print("Right Released")
         rightButton.backgroundColor = UIColor.darkGray
-        steer_value = "20"
-        writeValue(data: String(steer_value))
+//        steer_value = "20"
+//        writeValue(data: String(steer_value))
 //        writeValue(data: "2")
 //        writeValue(data: "0")
+        
+        steering_enabled = false
+        if !drive_enabled{
+            direction = 0
+            writeValue(data: String(direction))
+        }
+        else{
+            if direction == 2{
+                direction = 1
+                writeValue(data: String(direction))
+            }
+            else{ // direction = 4
+                direction = 5
+                writeValue(data: String(direction))
+            }
+        }
+        
         leftButton.isEnabled = true
-        displayLabel.text = steer_value
+//        displayLabel.text = steer_value
+        displayLabel.text = String(direction)
     }
     
     
