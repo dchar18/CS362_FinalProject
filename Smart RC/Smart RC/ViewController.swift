@@ -26,6 +26,7 @@ class ViewController: UIViewController {
     
     var centralManager: CBCentralManager!
     var hm10Peripheral: CBPeripheral!
+    var connected : Bool!
     
     var valueData : Data!
     var direction : Int!
@@ -40,10 +41,18 @@ class ViewController: UIViewController {
         direction = 0
         drive_enabled = false
         steering_enabled = false
+        connected = false
     }
     
     @IBAction func onConnectPressed(_ sender: UIButton) {
-        centralManager = CBCentralManager(delegate: self, queue: nil)
+        if !connected{
+            centralManager = CBCentralManager(delegate: self, queue: nil)
+            connected = true
+        }
+        else{
+            centralManager.cancelPeripheralConnection(hm10Peripheral)
+            connected = false
+        }
     }
     
 
@@ -66,7 +75,7 @@ class ViewController: UIViewController {
             writeValue(data: String(direction))
         }
         else{
-            if direction > 1{ // direction = 3
+            if direction == 3{
                 direction = 2
                 writeValue(data: String(direction))
             }
