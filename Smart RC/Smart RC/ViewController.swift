@@ -20,6 +20,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var leftButton: UIButton!
     @IBOutlet weak var rightButton: UIButton!
     @IBOutlet weak var displayLabel: UILabel!
+    @IBOutlet weak var SensorSwitch: UISwitch!
+    @IBOutlet weak var slider: UISlider!
+    
     
     var drive_value : String! = ""
     var steer_value : String! = ""
@@ -33,6 +36,8 @@ class ViewController: UIViewController {
     var steering_enabled : Bool!
     var drive_enabled : Bool!
     
+    var sensors_enabled : Bool!
+    var slider_val : Float!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,16 +47,57 @@ class ViewController: UIViewController {
         drive_enabled = false
         steering_enabled = false
         connected = false
+        sensors_enabled = SensorSwitch.isOn
+        slider_val = 0.5
+        
     }
+    @IBAction func onSensorSwitchChanged(_ sender: UISwitch) {
+        if SensorSwitch.isOn {
+            sensors_enabled = true
+            writeValue(data: "A")
+        }
+        else{
+            sensors_enabled = false
+            writeValue(data: "B")
+        }
+        print(sensors_enabled!)
+    }
+    
+    @IBAction func onSliderMoved(_ sender: Any) {
+        if slider.value < 0.20{
+            writeValue(data: "Z") // magenta
+            print("Z")
+        }
+        else if slider.value < 0.40{
+            writeValue(data: "Y") // red
+            print("Y")
+        }
+        else if slider.value < 0.60{
+            writeValue(data: "X") // green
+            print("X")
+        }
+        else if slider.value < 0.80{
+            writeValue(data: "W") // cyan
+            print("W")
+        }
+        else{
+            writeValue(data: "V") // blue
+            print("V")
+        }
+        print(slider.value)
+    }
+    
     
     @IBAction func onConnectPressed(_ sender: UIButton) {
         if !connected{
             centralManager = CBCentralManager(delegate: self, queue: nil)
             connected = true
+            connectButton.setTitle("Disconnect", for: .normal)
         }
         else{
             centralManager.cancelPeripheralConnection(hm10Peripheral)
             connected = false
+            connectButton.setTitle("Connect", for: .normal)
         }
     }
     
